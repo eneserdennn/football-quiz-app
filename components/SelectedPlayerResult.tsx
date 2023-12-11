@@ -107,7 +107,7 @@ const getPosition = (position: string | undefined): string => {
     case "midfield - Attacking Midfield":
       return "AT";
     case "midfield - Defensive Midfield":
-      return "DF";
+      return "MF";
     case "midfield - Central Midfield":
       return "MF";
     case "midfield - Left Midfield":
@@ -174,10 +174,10 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
     <View className="flex items-center">
       <View
         // style={{ opacity }}
-        className={`flex items-center p-1.5 rounded-full ${backgroundColor} shadow-md`}
+        className={`flex items-center p-0.5 rounded-full ${backgroundColor} shadow-md`}
       >
-        <View className="h-14 w-14 bg-white items-center justify-center rounded-full shadow-md">
-          <View className="bg-white rounded-full h-12 w-12 items-center justify-center">
+        <View className="h-14 bg-white items-center justify-center rounded-full shadow-md">
+          <View className="bg-white h-14 w-14 rounded-full items-center justify-center">
             {typeof data === "string" ? (
               <Text className="font-semibold text-center">{data}</Text>
             ) : (
@@ -192,7 +192,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
           )}
         </View>
       </View>
-      <View className="flex items-center justify-center bg-black p-1 mt-1.5 rounded-full">
+      <View className="flex items-center justify-center bg-slate-700 p-1 mt-2.5 rounded-full">
         <Text className="text-white text-xs px-1">{title}</Text>
       </View>
     </View>
@@ -281,7 +281,7 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
   }, [selected]);
 
   return (
-    <View className={`flex bg-white p-2 my-1 shadow-sm rounded-2xl`}>
+    <View className={`flex bg-white  p-2 my-1 shadow-sm rounded-2xl`}>
       <View className="flex flex-row justify-center">
         <Text className={`text-center text-lg p-1 font-bold`}>
           {selected.name.toUpperCase()}

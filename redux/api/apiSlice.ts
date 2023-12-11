@@ -9,8 +9,13 @@ export const apiSlice = createApi({
       query: () => `/leagues`,
     }),
     getRandomPlayer: builder.query({
-      query: () => ({
+      query: ({ minMarketValue, maxMarketValue, league }) => ({
         url: "/search",
+        params: {
+          minMarketValue,
+          maxMarketValue,
+          league: encodeURIComponent(league)
+        }
       }),
     }),
     getAllPlayers: builder.query({

@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./features/counter/counterSlice";
 import playerFindReducer from "./features/player/playerFindSlice";
 import randomPlayerReducer from "./features/randomPlayerSlice";
+import filterReducer from "@/redux/features/filter/filterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     animation: animationReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
     playerFind: playerFindReducer,
+    filter: filterReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
