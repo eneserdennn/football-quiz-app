@@ -229,7 +229,6 @@ const GuessPlayer = () => {
     }
 
     if (isFinded && attempts <= MAX_TRIES) {
-        console.log("animationFinished", animationFinished);
         return (
             <ScrollView className="flex flex-1 bg-[#27374D] pt-12">
                 <View className="flex flex-col items-center justify-center pt-2 rounded-md ">
@@ -312,7 +311,7 @@ const GuessPlayer = () => {
             });
             if (result?.length > 0) {
                 setFilteredData(result);
-                console.log(result);
+
             }
         }
     };

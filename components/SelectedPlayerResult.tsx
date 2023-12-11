@@ -227,7 +227,7 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
   useEffect(() => {
     if (player.name === selected.name) {
       dispatch(setIsFinded(true));
-      console.log("finded");
+
     }
   }, [selected]);
 
@@ -242,7 +242,7 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
         )?.team_logo;
         setTeamLogo(teamLogoURL);
         dispatch(setPlayerClubImage(teamLogoURL));
-        console.log(teamLogoURL);
+
       } else {
         const leagueData = data.find(
           (league: any) => league.league_name === selected.league
@@ -254,11 +254,7 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
         setTeamLogo(teamLogoURL);
         dispatch(setPlayerClubImage(teamLogoURL));
       }
-
-      console.log(selected.league);
-      console.log(selected.current_club_name);
     }
-    console;
   }, [data, teamName]);
 
   useEffect(() => {
@@ -270,7 +266,6 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
     }
     if (getPosition(selected.position) === getPosition(player.position)) {
       dispatch(setPlayerPosition(getPosition(selected.position)));
-      console.log(selected.position);
     }
     if (selected.market_value === player.market_value) {
       dispatch(setPlayerValue(selected.market_value));
