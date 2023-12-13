@@ -1,8 +1,8 @@
 import CustomHeader from "@/components/CustomHeader";
 import { Provider } from "react-redux";
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { store } from "@/redux/store";
-import {StatusBar} from "expo-status-bar";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -11,8 +11,8 @@ export const unstable_settings = {
 export default function RootLayoutNav() {
   return (
     <Provider store={store}>
-        <StatusBar style="dark" />
-        <Stack>
+      <StatusBar style="dark" />
+      <Stack>
         <Stack.Screen
           name="index"
           options={{
@@ -35,7 +35,8 @@ export default function RootLayoutNav() {
           name="Filter"
           options={{
             headerShown: false,
-          }}/>
+          }}
+        />
       </Stack>
     </Provider>
   );

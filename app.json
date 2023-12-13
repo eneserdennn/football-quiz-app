@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "football-quiz-app",
-    "slug": "football-quiz-app",
-    "version": "1.0.0",
+    "name": "football-quizer",
+    "slug": "football-quizer",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -12,19 +12,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.eneserden.footballquizapp"
+      "bundleIdentifier": "com.eneserden.footballquizerapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.eneserden.footballquizapp"
+      "package": "com.eneserden.footballquizerapp"
     },
     "web": {
       "bundler": "metro",
@@ -32,7 +30,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 31,
+            "targetSdkVersion": 31,
+            "buildToolsVersion": "31.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -43,8 +54,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "8e7d98ec-85c6-47ff-bc7d-d13091dbc24d"
+        "projectId": "357c4ce1-8f92-4c55-ad84-9e474295c768"
       }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-2873161513297667~3324590779",
+    "ios_app_id": "ca-app-pub-2873161513297667~5504564388"
   }
 }
