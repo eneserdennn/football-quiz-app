@@ -1,20 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// http://api.eneserden.com/api/
+const baseURL= "https://api.eneserden.com/football/"
 
 export const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: "http://api.eneserden.com/api/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: baseURL }),
   endpoints: (builder) => ({
     getLeagues: builder.query({
       query: () => `/leagues`,
     }),
     getRandomPlayer: builder.query({
       query: ({ minMarketValue, maxMarketValue, league }) => ({
-        url: "/search",
+        url: "players/random",
         params: {
           minMarketValue,
           maxMarketValue,
-          league: encodeURIComponent(league)
+          league: league
         }
       }),
     }),

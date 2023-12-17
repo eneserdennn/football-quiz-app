@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "football-quizer",
+    "name": "Football Quizer",
     "slug": "football-quizer",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -35,8 +35,8 @@
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 31,
-            "targetSdkVersion": 31,
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
             "buildToolsVersion": "31.0.0"
           },
           "ios": {
