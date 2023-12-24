@@ -7,13 +7,13 @@ import { Link } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-// import mobileAds from "react-native-google-mobile-ads";
-//
-// mobileAds()
-//   .initialize()
-//   .then((adapterStatuses) => {
-//     // Initialization complete!
-//   });
+import mobileAds from "react-native-google-mobile-ads";
+
+mobileAds()
+  .initialize()
+  .then((adapterStatuses) => {
+    // Initialization complete!
+  });
 
 const Index = () => {
   return (

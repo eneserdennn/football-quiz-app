@@ -300,14 +300,14 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
     }, [selected]);
 
     return (
-        <View className={`flex bg-white  p-2 my-1 shadow-sm rounded-2xl`}>
+        <View className={`flex bg-white p-2 my-1 shadow-sm rounded-2xl`}>
             <View className="flex flex-row justify-center">
                 <Text className={`text-center text-lg p-1 font-bold`}>
                     {selected.name.toUpperCase()}
                 </Text>
             </View>
 
-            <View className="flex flex-row justify-between">
+            <View className="flex flex-row justify-evenly">
                 <PlayerInfo
                     delay={300}
                     onAnimationFinish={() => {
@@ -355,15 +355,15 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
                 {/*    />*/}
                 {/*)}*/}
 
-                    {/*<PlayerInfo*/}
-                    {/*    delay={900}*/}
-                    {/*    onAnimationFinish={() => {*/}
-                    {/*        setFinishedAnimations((prev) => prev + 1);*/}
-                    {/*    }}*/}
-                    {/*    match={selected.playerTeam.name === player.playerTeam.name}*/}
-                    {/*    title="Club"*/}
-                    {/*    data={selected.playerTeam.name}*/}
-                    {/*/>*/}
+                {/*<PlayerInfo*/}
+                {/*    delay={900}*/}
+                {/*    onAnimationFinish={() => {*/}
+                {/*        setFinishedAnimations((prev) => prev + 1);*/}
+                {/*    }}*/}
+                {/*    match={selected.playerTeam.name === player.playerTeam.name}*/}
+                {/*    title="Club"*/}
+                {/*    data={selected.playerTeam.name}*/}
+                {/*/>*/}
 
                 <PlayerInfo
                     delay={1200}
@@ -421,15 +421,17 @@ const SelectedPlayerResult: React.FC<SelectedPlayerResultProps> = ({
                 <View className="flex items-center justify-center bg-slate-700 p-1 rounded-full">
                     <Text className="text-white text-xs px-1">Club</Text>
                 </View>
-                <View className={`flex flex-row space-x-2 items-center justify-center border-2 shadow ${selected.playerTeam.name === player.playerTeam.name ? "border-green-700" : "border-slate-700"}  px-4 py-1 rounded-full`}>
+                <View
+                    className={`flex flex-row space-x-2 items-center justify-center border-2 shadow ${selected.playerTeam.name === player.playerTeam.name ? "border-green-700" : "border-slate-700"}  px-4 py-1 rounded-full`}>
 
-                    <Text className={`text-center text-md font-bold ${selected.playerTeam.name === player.playerTeam.name && "text-green-700"}`}>
-                    {selected.playerTeam.name.toUpperCase()}
-                </Text>
-                {selected.playerTeam.name === player.playerTeam.name && <View
-                    className="bg-white rounded-full h-5 w-5 border border-green-700 items-center justify-center">
-                    <FontAwesome5 name="check" size={12} color="green"/>
-                </View>}</View>
+                    <Text
+                        className={`text-center text-md font-bold ${selected.playerTeam.name === player.playerTeam.name && "text-green-700"}`}>
+                        {selected.playerTeam.name.toUpperCase()}
+                    </Text>
+                    {selected.playerTeam.name === player.playerTeam.name && <View
+                        className="bg-white rounded-full h-5 w-5 border border-green-700 items-center justify-center">
+                        <FontAwesome5 name="check" size={12} color="green"/>
+                    </View>}</View>
             </View>
             {/* <View className="flex flex-row justify-evenly">
         <Text

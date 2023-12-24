@@ -1,8 +1,11 @@
-// import {
-//   AdEventType,
-//   InterstitialAd,
-//   TestIds,
-// } from "react-native-google-mobile-ads";
+import {
+    AdEventType,
+    InterstitialAd,
+    BannerAd, BannerAdSize,
+    RewardedAd, RewardedAdEventType,
+    TestIds,
+} from "react-native-google-mobile-ads";
+
 import {
     FlatList,
     Pressable,
@@ -28,7 +31,7 @@ import {
     setPlayerPosition,
 } from "@/redux/features/player/playerFindSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     useGetAllPlayersQuery,
     useGetRandomPlayerQuery,
@@ -47,13 +50,38 @@ import codes from "@/codes.json";
 import {router} from "expo-router";
 import {setRandomPlayer} from "@/redux/features/randomPlayerSlice";
 
+
+//IOS
 // const adUnitId = __DEV__
-//   ? TestIds.INTERSTITIAL
-//   : "ca-app-pub-2873161513297667/1759910432";
-//
-// const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
-//   keywords: ["football", "quiz", "soccer", "player", "guess"],
-// });
+//     ? TestIds.INTERSTITIAL
+//     : "ca-app-pub-2873161513297667/1759910432";
+
+//Android
+const adUnitId = __DEV__
+    ? TestIds.INTERSTITIAL
+    : "ca-app-pub-2873161513297667/9652511192";
+
+//IOS
+// const reawardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-2873161513297667/7032482052';
+
+//Android
+const reawardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-2873161513297667/8455081225';
+
+//IOS
+// const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-2873161513297667/7022224837';
+
+//Android
+const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-2873161513297667/1506529498';
+
+
+const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+    keywords: ["football", "quiz", "soccer", "player", "guess"],
+});
+
+const rewarded = RewardedAd.createForAdRequest(reawardedAdUnitId, {
+    keywords: ["football", "quiz", "soccer", "player", "guess"],
+});
+
 
 interface PlayerProfile {
     id: string;
@@ -108,6 +136,18 @@ const GuessPlayer = () => {
     const [selectedPlayers, setSelectedPlayers] = useState<PlayerProfile[]>([]);
     const animation = useRef(null);
     const [loaded, setLoaded] = useState(false);
+    const [isGiveUp, setIsGiveUp] = useState(false);
+    const [selectedPosition, setSelectedPosition] = useState("");
+
+
+    //////////////REWARDED AD/////////////////////
+    const [loadedReward, setLoadedReward] = useState(false);
+    const [isRewarded, setIsRewarded] = useState(false);
+    const [selectedInfo, setSelectedInfo] = useState('');
+    const [isPosition, setIsPosition] = useState(false);
+    const [isClub, setIsClub] = useState(false);
+    const [isCountry, setIsCountry] = useState(false);
+    //////////////////////////////////////////////
 
     // Dropdown
     const [inputValue, setInputValue] = useState("");
@@ -146,19 +186,19 @@ const GuessPlayer = () => {
             league,
         });
 
-    // const reloadInterstitial = () => {
-    //   const unsubscribe = interstitial.addAdEventListener(
-    //     AdEventType.LOADED,
-    //     () => {
-    //       setLoaded(true);
-    //     }
-    //   );
-    //   // Start loading the interstitial straight away
-    //   interstitial.load();
-    //
-    //   // Unsubscribe from events on unmount
-    //   return unsubscribe;
-    // };
+    const reloadInterstitial = () => {
+        const unsubscribe = interstitial.addAdEventListener(
+            AdEventType.LOADED,
+            () => {
+                setLoaded(true);
+            }
+        );
+        // Start loading the interstitial straight away
+        interstitial.load();
+
+        // Unsubscribe from events on unmount
+        return unsubscribe;
+    };
 
     useEffect(() => {
         if (data?.randomPlayer) {
@@ -170,19 +210,129 @@ const GuessPlayer = () => {
         refetch();
     }, [league, minMarketValue, maxMarketValue]);
 
-    // useEffect(() => {
-    //   const unsubscribe = interstitial.addAdEventListener(
-    //     AdEventType.LOADED,
-    //     () => {
-    //       setLoaded(true);
-    //     }
-    //   );
-    //   // Start loading the interstitial straight away
-    //   interstitial.load();
-    //   // Unsubscribe from events on unmount
-    //   return unsubscribe;
-    //   reloadInterstitial();
-    // }, []);
+    useEffect(() => {
+
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = interstitial.addAdEventListener(
+            AdEventType.LOADED,
+            () => {
+                setLoaded(true);
+            }
+        );
+        // Start loading the interstitial straight away
+        interstitial.load();
+        // Unsubscribe from events on unmount
+        return unsubscribe;
+        reloadInterstitial();
+    }, []);
+
+    ////////////////////////////REWARDED AD//////////////////////////////
+    useEffect(() => {
+        const unsubscribeLoaded = rewarded.addAdEventListener(RewardedAdEventType.LOADED, () => {
+            setLoadedReward(true);
+        });
+
+        const unsubscribeEarned = rewarded.addAdEventListener(
+            RewardedAdEventType.EARNED_REWARD,
+            reward => {
+                console.log('User earned reward of ', reward);
+                setIsRewarded(true);
+            },
+        );
+
+        rewarded.load();
+
+        return () => {
+            unsubscribeLoaded();
+            unsubscribeEarned();
+        };
+    }, []);
+
+    const handleInfoClick = (info: string) => {
+        setSelectedInfo(info);
+
+
+        try {
+            if (loadedReward) {
+                rewarded.show();
+                switch (info) {
+                    case 'club':
+                        setIsClub(true);
+                        break;
+                    case 'country':
+                        setIsCountry(true);
+                        break;
+                    case 'position':
+                        setIsPosition(true);
+                        break;
+                }
+                setLoadedReward(false)
+            } else {
+                console.log('Ad not loaded yet');
+                setLoadedReward(false);
+            }
+        } catch (e) {
+            setLoadedReward(false);
+            console.log(e);
+        }
+
+        // if (loadedReward) {
+        //     rewarded.show();
+        // } else {
+        //     console.log('Ad not loaded yet');
+        //     setLoadedReward(false);
+        //
+        // }
+
+    };
+    /////////////////////////////////////////////
+
+    useEffect(() => {
+        if (data) {
+            const getPosition = (position: string | undefined): string => {
+                if (!position) return "N/A";
+
+                switch (position) {
+                    case "midfield - Attacking Midfield":
+                        return "AT";
+                    case "midfield - Defensive Midfield":
+                        return "MF";
+                    case "midfield - Central Midfield":
+                        return "MF";
+                    case "midfield - Left Midfield":
+                        return "MF";
+                    case "midfield - Right Midfield":
+                        return "MF";
+                    case "midfield - Left Wing":
+                        return "LW";
+                    case "midfield - Right Wing":
+                        return "RW";
+                    default:
+                        break;
+                }
+
+                switch (position.split(" ")[0]) {
+                    case "Goalkeeper":
+                        return "GK";
+                    case "Defender":
+                        return "DF";
+                    case "Midfielder":
+                        return "MF";
+                    case "midfield":
+                        return "MF";
+                    case "Attack":
+                        return "AT";
+                    default:
+                        return "N/A";
+                }
+            };
+
+
+            setSelectedPosition(getPosition(data?.randomPlayer?.position));
+        }
+    }, [data]);
 
     const {
         data: allPlayers,
@@ -216,45 +366,35 @@ const GuessPlayer = () => {
     if (attempts >= MAX_TRIES && !isCorrect) {
         try {
             if (loaded) {
-                // interstitial.show();
+                interstitial.show();
             }
         } catch (e) {
             console.log(e);
         }
         return (
             <ScrollView className="flex flex-1 pt-16 bg-dark-green">
-                {/*<View className="flex flex-col items-center bg-light-gray justify-center rounded-md mx-4">*/}
-                {/*  <Image*/}
-                {/*    source={{*/}
-                {/*      uri:*/}
-                {/*        "http://api.eneserden.com/api/images/" +*/}
-                {/*        data?.randomPlayer?.league.toLowerCase().replace(" ", "-") +*/}
-                {/*        "/" +*/}
-                {/*        data?.randomPlayer?.name.toLowerCase().replace(" ", "-") +*/}
-                {/*        ".jpg",*/}
-                {/*    }}*/}
-                {/*    style={{*/}
-                {/*      width: "100%",*/}
-                {/*      height: 250,*/}
-                {/*    }}*/}
-                {/*    contentFit="contain"*/}
-                {/*    className="rounded-md "*/}
-                {/*    transition={1000}*/}
-                {/*  />*/}
-                {/*</View>*/}
                 <View className="flex items-center p-4 bg-light-gray m-4 rounded-lg">
                     <Text className="text-3xl font-bold text-rose-600">Game over!</Text>
                     <Text className="text-lg font-semibold text-gray-600 text-center">
-                        You have reached the maximum number of tries. The correct answer is:
+                        {isGiveUp ? "You gave up! The player was:" : "You have reached the maximum number of tries. The correct answer is:"}
                     </Text>
                     <Text className="text-3xl font-bold">{data?.randomPlayer?.name}</Text>
                 </View>
 
-                <View className="flex mx-4">
+                <View className="flex mx-4 mb-2">
                     <SelectedPlayerResult
                         selected={data?.randomPlayer}
                         player={data?.randomPlayer}
                     />
+                </View>
+
+                <View className="mt-10">
+                    {bannerAdUnitId && (
+                        <BannerAd
+                            unitId={bannerAdUnitId}
+                            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                        />
+                    )}
                 </View>
                 <TouchableOpacity
                     onPress={() => {
@@ -262,20 +402,23 @@ const GuessPlayer = () => {
                         setAttempts(0);
                         setSelectedPlayers([]);
                         setIsCorrect(false);
+                        setIsGiveUp(false);
                         dispatch(setIsFinded(false));
                         dispatch(setPlayerClub(""));
                         dispatch(setPlayerClubImage(""));
                         dispatch(setPlayerCountry(""));
                         dispatch(setPlayerPosition(""));
                         dispatch(setPlayerLeague(""));
-                        // reloadInterstitial();
+                        setIsRewarded(false);
+                        reloadInterstitial();
                     }}
-                    className="bg-green-600 p-4 rounded-lg m-4"
+                    className="bg-green-600 p-4 rounded-lg m-4 mt-10"
                 >
                     <Text className="text-white font-semibold text-center">
                         Play again
                     </Text>
                 </TouchableOpacity>
+
             </ScrollView>
         );
     }
@@ -283,38 +426,17 @@ const GuessPlayer = () => {
     if (isFinded && attempts <= MAX_TRIES) {
         try {
             if (loaded) {
-                // interstitial.show();
+                interstitial.show();
             }
         } catch (e) {
             console.log(e);
         }
         return (
             <ScrollView className="flex flex-1 bg-dark-green pt-16">
-                <View className="flex flex-col items-center justify-center rounded-md bg-light-gray mx-4">
-                    {/*<Image*/}
-                    {/*  source={{*/}
-                    {/*    uri:*/}
-                    {/*      "http://api.eneserden.com/api/images/" +*/}
-                    {/*      data?.randomPlayer?.league.toLowerCase().replace(" ", "-") +*/}
-                    {/*      "/" +*/}
-                    {/*      data?.randomPlayer?.name.toLowerCase().replace(" ", "-") +*/}
-                    {/*      ".jpg",*/}
-                    {/*  }}*/}
-                    {/*  style={{*/}
-                    {/*    width: "100%",*/}
-                    {/*    height: 250,*/}
-                    {/*  }}*/}
-                    {/*  contentFit="contain"*/}
-                    {/*  className="rounded-md "*/}
-                    {/*  transition={1000}*/}
-                    {/*/>*/}
-                </View>
                 <View className="flex items-center space-y-4 p-4 bg-[#DDE6ED] m-4 rounded-lg">
                     <Text className="text-3xl font-bold text-light-green">Correct!</Text>
                     <Text className="text-lg font-semibold text-gray-600 text-center">
-                        {attempts === 0
-                            ? "You got it on the first try!"
-                            : `It took you ${attempts} tries.`}
+                        {attempts === 0 ? "You got it on the first try!" : `It took you ${attempts} tries.`}
                     </Text>
                     <Text className="text-3xl font-bold">{data?.randomPlayer?.name}</Text>
                 </View>
@@ -324,26 +446,39 @@ const GuessPlayer = () => {
                         player={data?.randomPlayer}
                     />
                 </View>
+
+                <View className="mt-10">
+                    {bannerAdUnitId && (
+                        <BannerAd
+                            unitId={bannerAdUnitId}
+                            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                        />
+                    )}
+                </View>
+
                 <TouchableOpacity
                     onPress={() => {
                         refetch();
                         setAttempts(0);
                         setSelectedPlayers([]);
                         setIsCorrect(false);
+                        setIsGiveUp(false);
+                        setIsRewarded(false);
                         dispatch(setIsFinded(false));
                         dispatch(setPlayerClub(""));
                         dispatch(setPlayerClubImage(""));
                         dispatch(setPlayerCountry(""));
                         dispatch(setPlayerPosition(""));
                         dispatch(setPlayerLeague(""));
-                        // reloadInterstitial();
+                        reloadInterstitial();
                     }}
-                    className="bg-light-green p-4 rounded-lg m-4"
+                    className="bg-light-green p-4 rounded-lg m-4 mt-16"
                 >
                     <Text className="text-white font-semibold text-center">
                         Play again
                     </Text>
                 </TouchableOpacity>
+
             </ScrollView>
         );
     }
@@ -384,6 +519,8 @@ const GuessPlayer = () => {
         );
     }
 
+    console.log(playerCountry);
+
     return (
         <SafeAreaView className="flex-1 bg-dark-green">
             <StatusBar style="light"/>
@@ -420,6 +557,7 @@ const GuessPlayer = () => {
                         onPress={() => {
                             // refetch();
                             setAttempts(7);
+                            setIsGiveUp(true);
                             // setSelectedPlayers([]);
                             // setIsCorrect(false);
                             // dispatch(setIsFinded(false));
@@ -453,7 +591,7 @@ const GuessPlayer = () => {
                 <View
                     style={{
                         position: "absolute",
-                        top: 180,
+                        top: 170,
                         left: 10,
                         right: 10,
                         zIndex: 1,
@@ -500,22 +638,10 @@ const GuessPlayer = () => {
                     />
                 </View>
             )}
-            <View className="relative flex-col items-center justify-center rounded-md">
-                {playerClub !== "" ? (
+            <View className="relative flex-col items-center justify-center rounded-md mx-4">
+                {playerClub !== "" || isRewarded && isClub ? (
                     <View
                         className="absolute flex items-center shadow-2xl justify-center border-2 border-light-gray bg-light-green rounded-full h-16 w-16 top-6 right-2">
-                        {/*<Image*/}
-                        {/*  source={{*/}
-                        {/*    uri: playerClubImage,*/}
-                        {/*  }}*/}
-                        {/*  style={{*/}
-                        {/*    width: 50,*/}
-                        {/*    height: 50,*/}
-                        {/*  }}*/}
-                        {/*  contentFit="contain"*/}
-                        {/*  className="rounded-full"*/}
-                        {/*  transition={1000}*/}
-                        {/*/>*/}
                         {data?.randomPlayer?.playerTeam?.name.length > 6 ? (
                             <Text className="text-white text-xs text-center">
                                 {data?.randomPlayer?.playerTeam?.name}
@@ -528,39 +654,42 @@ const GuessPlayer = () => {
                     </View>
                 ) : (
                     <View
-                        className="absolute flex items-center shadow-2xl justify-center bg-black rounded-full h-16 w-16 top-6 right-2">
-                        <Text className="text-white text-[32px] font-bold">?</Text>
+                        className="absolute flex items-center shadow-2xl justify-center rounded-full h-16 w-16 top-6 right-2">
+                        <Text className="text-white text-[32px] font-bold">
+                            <TouchableOpacity onPress={() => handleInfoClick('club')}>
+                                <Image
+                                    source={Images.RewardedImage}
+                                    style={{
+                                        width: 64,
+                                        height: 64,
+                                    }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                    className={`${loadedReward ? '' : 'opacity-25'}`}
+                                />
+                            </TouchableOpacity>
+                        </Text>
+                        <View className="flex items-center justify-center bg-slate-700 p-1 mt- rounded-full">
+                            <Text className="text-white text-xs px-1">
+                                Club
+                            </Text>
+                        </View>
                     </View>
                 )}
-                {/*{playerLeague !== "" ? (*/}
-                {/*    <View*/}
-                {/*        className="absolute flex items-center shadow-2xl justify-center border-2 border-light-gray bg-light-green rounded-full h-16 w-16 bottom-6 right-2">*/}
-                {/*        <Text className="text-white text-center font-bold">*/}
-                {/*            {playerLeague}*/}
-                {/*        </Text>*/}
-                {/*    </View>*/}
-                {/*) : (*/}
-                {/*    <View*/}
-                {/*        className="absolute flex items-center shadow-2xl justify-center bg-black rounded-full h-16 w-16 bottom-6 right-2">*/}
-                {/*        <Text className="text-white text-[32px] font-bold">?</Text>*/}
-                {/*    </View>*/}
-                {/*)}*/}
-
                 <View
-                    className="absolute flex items-center shadow-2xl justify-center bg-black rounded-full h-16 w-16 bottom-6 right-2">
-                    <Text className="text-white text-center  font-bold">
+                    className="absolute flex items-center shadow-2xl justify-center bg-white rounded-full h-[64px] w-[64px] bottom-0 right-2">
+                    <Text className=" text-center  font-bold">
                         {MAX_TRIES - attempts} {"\n"}{" "}
                         {MAX_TRIES - attempts === 1 ? "Try" : "Tries"}
                     </Text>
                 </View>
-
-                {playerCountry !== "" ? (
+                {playerCountry !== "" || isRewarded && isCountry ? (
                     <View
                         className="absolute flex items-center shadow-2xl justify-center border-2 border-light-gray bg-light-green rounded-full h-16 w-16 bottom-6 left-2">
                         <Image
                             source={{
                                 uri: `https://flagcdn.com/w160/${getCountryCode(
-                                    playerCountry
+                                    data?.randomPlayer?.nationality
                                 )}.jpg`,
                             }}
                             style={{
@@ -573,45 +702,69 @@ const GuessPlayer = () => {
                     </View>
                 ) : (
                     <View
-                        className="absolute flex items-center shadow-2xl justify-center bg-black rounded-full h-16 w-16 bottom-6 left-2">
-                        <Text className="text-white text-[32px] font-bold">?</Text>
+                        className="absolute flex items-center shadow-2xl justify-center rounded-full h-16 w-16 bottom-0 left-2">
+                        <Text className="text-white text-[32px] font-bold">
+                            <TouchableOpacity onPress={() => handleInfoClick('country')}>
+                                <Image
+                                    source={Images.RewardedImage}
+                                    style={{
+                                        width: 64,
+                                        height: 64,
+                                    }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                    className={`${loadedReward ? '' : 'opacity-25'}`}
+                                />
+                            </TouchableOpacity>
+                        </Text>
+                        <View className="flex items-center justify-center bg-slate-700 p-1 mt- rounded-full">
+                            <Text className="text-white text-xs px-1">
+                                Country
+                            </Text>
+                        </View>
                     </View>
                 )}
-                {playerPosition !== "" ? (
+                {playerPosition !== "" || isRewarded && isPosition ? (
                     <View
                         className="absolute flex items-center shadow-2xl  justify-center border-2 border-light-gray bg-light-green rounded-full h-16 w-16 top-6 left-2">
-                        <Text className="text-white font-bold">{playerPosition}</Text>
+                        <Text className="text-white font-bold">{selectedPosition}</Text>
                     </View>
                 ) : (
                     <View
-                        className="absolute flex items-center shadow-2xl justify-center bg-black rounded-full h-16 w-16 top-6 left-2">
-                        <Text className="text-white text-[32px] font-bold">?</Text>
+                        className="absolute flex items-center shadow-2xl justify-center rounded-full h-16 w-16 top-6 left-2">
+                        <Text className="text-white text-[32px] font-bold">
+                            <TouchableOpacity onPress={() => handleInfoClick('position')}>
+                                <Image
+                                    source={Images.RewardedImage}
+                                    style={{
+                                        width: 64,
+                                        height: 64,
+                                    }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                    className={`${loadedReward ? '' : 'opacity-25'}`}
+                                />
+                            </TouchableOpacity>
+
+                        </Text>
+                        <View className="flex items-center justify-center bg-slate-700 p-1 mt- rounded-full">
+                            <Text className="text-white text-xs px-1">
+                                Position
+                            </Text>
+                        </View>
                     </View>
                 )}
 
                 {isLoading ? (
                     <Text>Loading...</Text>
                 ) : (
-                    <View className="p-3 bg-white rounded-full shadow-2xl">
-                        {/* {!showPhoto && (
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowPhoto(true);
-                  }}
-                  className="bg-[#DDE6ED] p-4 rounded-lg"
-                >
-                  <Text className="text-[#27374D] font-semibold text-center">
-                    Show photo
-                  </Text>
-                </TouchableOpacity>
-              )} */}
-
-                        {data?.randomPlayer?.image_url && showPhoto && (
+                    <View className="p-1 bg-white rounded-full shadow-2xl">
+                        {data?.randomPlayer?.image_url && showPhoto ? (
                             <ImageBackground
                                 source={Images.ImageBg}
                                 style={{
-                                    width: 250,
-                                    height: 250,
+                                    width: 200,
+                                    height: 200,
                                 }}
                                 imageStyle={{
                                     borderRadius: 120,
@@ -632,9 +785,9 @@ const GuessPlayer = () => {
                                             "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png",
                                     }}
                                     style={{
-                                        width: 250,
-                                        height: 250,
-                                        borderWidth: 4,
+                                        width: 200,
+                                        height: 200,
+                                        borderWidth: 2,
                                     }}
                                     contentFit="contain"
                                     className="rounded-full"
@@ -658,6 +811,18 @@ const GuessPlayer = () => {
                                     transition={1000}
                                 />
                             </ImageBackground>
+                        ) : (
+                            <View
+                                className="flex items-center justify-center bg-light-gray rounded-full"
+                                style={{
+                                    width: 200,
+                                    height: 200,
+                                }}
+                            >
+                                <Text className="text-3xl font-bold text-light-gray">
+                                    Image not found
+                                </Text>
+                            </View>
                         )}
                     </View>
                 )}
@@ -670,7 +835,7 @@ const GuessPlayer = () => {
                 </View>
             )}
 
-            <ScrollView className="flex px-8">
+            <ScrollView className="flex px-8 mx-2 mt-4 border-t-2 border-gray-300">
                 {selectedPlayers.map((player, index) => (
                     <SelectedPlayerResult
                         key={index}

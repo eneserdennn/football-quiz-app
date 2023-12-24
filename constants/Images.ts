@@ -9,19 +9,21 @@ import CrystalPalace from "@/assets/images/england/crystalpalace.png";
 import Everton from "@/assets/images/england/everton.png";
 import Fulham from "@/assets/images/england/fulham.png";
 import ImageBg from "@/assets/images/image-bg.png";
+import RewardedImage from "@/assets/images/rewarded.png";
 
 export const Images = {
-  Banner,
-  ImageBg,
-  Arsenal,
-  Bournemouth,
-  AstonVilla,
-  Brentford,
-  Brighton,
-  Chelsea,
-  CrystalPalace,
-  Everton,
-  Fulham,
+    RewardedImage,
+    Banner,
+    ImageBg,
+    Arsenal,
+    Bournemouth,
+    AstonVilla,
+    Brentford,
+    Brighton,
+    Chelsea,
+    CrystalPalace,
+    Everton,
+    Fulham,
 };
 
 export default Images;
